@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Realtrix — Outreach Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: '#0a0a0a',
+            surface: '#1a1a1a',
+            surfaceHover: '#2a2a2a',
+            border: '#333333',
+            accent: '#fbbf24',
+            accentHover: '#f59e0b',
+            textPrimary: '#ffffff',
+            textSecondary: '#a0a0a0',
+            success: '#10b981',
+            error: '#ef4444',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #0a0a0a; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #1a1a1a; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+    .tab-active { background: #fbbf24; color: #000; }
+    .tab-inactive { color: #a0a0a0; }
+    .tab-inactive:hover { color: #fff; background: #2a2a2a; }
+    .tier-hot { background: rgba(239,68,68,0.1); color: #ef4444; border-color: rgba(239,68,68,0.2); }
+    .tier-warm { background: rgba(251,191,36,0.1); color: #fbbf24; border-color: rgba(251,191,36,0.2); }
+    .tier-cold { background: rgba(59,130,246,0.1); color: #60a5fa; border-color: rgba(59,130,246,0.2); }
+    .tier-bad { background: rgba(160,160,160,0.1); color: #a0a0a0; border-color: rgba(160,160,160,0.2); }
+    .status-new { background: rgba(59,130,246,0.1); color: #60a5fa; border-color: rgba(59,130,246,0.2); }
+    .status-emailed { background: rgba(251,191,36,0.1); color: #fbbf24; border-color: rgba(251,191,36,0.2); }
+    .status-replied { background: rgba(16,185,129,0.1); color: #10b981; border-color: rgba(16,185,129,0.2); }
+    .status-bounced { background: rgba(239,68,68,0.1); color: #ef4444; border-color: rgba(239,68,68,0.2); }
+    .reply-interested { background: rgba(16,185,129,0.1); color: #10b981; }
+    .reply-not_interested { background: rgba(239,68,68,0.1); color: #ef4444; }
+    .reply-out_of_office { background: rgba(251,191,36,0.1); color: #fbbf24; }
+    .reply-other { background: rgba(160,160,160,0.1); color: #a0a0a0; }
+    .modal-overlay { background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .skeleton { background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  </style>
+</head>
+<body>
+
+<div id="app" class="flex h-screen overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <div class="w-64 h-screen bg-background border-r border-border flex flex-col fixed left-0 top-0 z-50">
+    <div class="h-20 flex items-center px-6 border-b border-border">
+      <div class="flex items-center gap-2 cursor-pointer">
+        <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+          <span class="text-black font-bold text-xl">R</span>
+        </div>
+        <div>
+          <span class="text-lg font-bold tracking-tight text-white">Realtrix</span>
+          <p class="text-xs text-textSecondary -mt-0.5">Outreach Hub</p>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
+      <button onclick="showTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all nav-btn active-nav">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <button onclick="showTab('prospects')" id="nav-prospects" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all nav-btn text-textSecondary hover:bg-surfaceHover hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Prospects
+      </button>
+      <button onclick="showTab('emails')" id="nav-emails" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all nav-btn text-textSecondary hover:bg-surfaceHover hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Emails Written
+      </button>
+      <button onclick="showTab('replies')" id="nav-replies" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all nav-btn text-textSecondary hover:bg-surfaceHover hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+        Replies
+      </button>
+      <button onclick="showTab('dedup')" id="nav-dedup" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all nav-btn text-textSecondary hover:bg-surfaceHover hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+        Dedup Log
+      </button>
+    </nav>
+    <div class="p-4 border-t border-border">
+      <div class="flex items-center gap-3 px-2 mb-3">
+        <div class="w-8 h-8 rounded-full bg-surfaceHover flex items-center justify-center text-textSecondary text-xs font-bold">T</div>
+        <div>
+          <p class="text-sm font-medium text-white">Trevor</p>
+          <p class="text-xs text-textSecondary">Realtrix</p>
+        </div>
+      </div>
+      <div id="connection-status" class="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-surface border border-border">
+        <div class="w-2 h-2 rounded-full bg-error spin" id="status-dot"></div>
+        <span class="text-xs text-textSecondary" id="status-text">Connecting...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="ml-64 flex-1 overflow-y-auto">
+    <div class="p-6 space-y-6">
+
+      <!-- DASHBOARD TAB -->
+      <div id="tab-dashboard" class="fade-in">
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-textPrimary">Dashboard</h1>
+            <p class="text-textSecondary text-sm">Real-time outreach tracking & performance.</p>
+          </div>
+          <button onclick="loadAll()" class="flex items-center gap-2 px-4 py-2 bg-accent text-black rounded-lg text-sm font-medium hover:bg-accentHover transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+            Refresh
+          </button>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="stat-cards">
+          <div class="skeleton h-28"></div>
+          <div class="skeleton h-28"></div>
+          <div class="skeleton h-28"></div>
+          <div class="skeleton h-28"></div>
+        </div>
+
+        <!-- TIER BREAKDOWN + REPLY TYPES -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+          <div class="bg-surface border border-border rounded-xl p-5">
+            <h3 class="text-sm font-semibold text-textPrimary mb-4">Tier Breakdown</h3>
+            <div id="tier-chart" class="space-y-3">
+              <div class="skeleton h-8"></div>
+              <div class="skeleton h-8"></div>
+              <div class="skeleton h-8"></div>
+              <div class="skeleton h-8"></div>
+            </div>
+          </div>
+          <div class="bg-surface border border-border rounded-xl p-5">
+            <h3 class="text-sm font-semibold text-textPrimary mb-4">Reply Classification</h3>
+            <div id="reply-chart" class="space-y-3">
+              <div class="skeleton h-8"></div>
+              <div class="skeleton h-8"></div>
+              <div class="skeleton h-8"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="bg-surface border border-border rounded-xl p-5">
+          <h3 class="text-sm font-semibold text-textPrimary mb-4">Recent Replies</h3>
+          <div id="recent-replies" class="space-y-2">
+            <div class="skeleton h-12"></div>
+            <div class="skeleton h-12"></div>
+            <div class="skeleton h-12"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROSPECTS TAB -->
+      <div id="tab-prospects" class="hidden fade-in">
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-textPrimary">Prospects</h1>
+            <p class="text-textSecondary text-sm">All contacts — deduplicated on email.</p>
+          </div>
+          <div class="flex gap-2">
+            <input id="prospect-search" onkeyup="filterProspects()" placeholder="Search name, company, email..." class="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent w-64" />
+            <select id="prospect-status-filter" onchange="filterProspects()" class="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-textSecondary focus:outline-none focus:border-accent">
+              <option value="">All Statuses</option>
+              <option value="new">New</option>
+              <option value="emailed">Emailed</option>
+              <option value="replied">Replied</option>
+              <option value="bounced">Bounced</option>
+            </select>
+            <select id="prospect-tier-filter" onchange="filterProspects()" class="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-textSecondary focus:outline-none focus:border-accent">
+              <option value="">All Tiers</option>
+              <option value="hot">Hot</option>
+              <option value="warm">Warm</option>
+              <option value="cold">Cold</option>
+              <option value="bad_match">Bad Match</option>
+            </select>
+          </div>
+        </div>
+        <div class="bg-surface border border-border rounded-xl overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-border">
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Name</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Company</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Email</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Tier</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Score</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Status</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Added</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium"></th>
+              </tr>
+            </thead>
+            <tbody id="prospects-body">
+              <tr><td colspan="8" class="px-4 py-8 text-center text-textSecondary">
+                <div class="flex items-center justify-center gap-2">
+                  <svg class="spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  Loading prospects...
+                </div>
+              </td></tr>
+            </tbody>
+          </table>
+          <div class="px-4 py-3 border-t border-border flex items-center justify-between">
+            <span class="text-xs text-textSecondary" id="prospects-count">—</span>
+            <div class="flex gap-2">
+              <button onclick="prevPage('prospects')" class="px-3 py-1.5 bg-surfaceHover border border-border rounded text-xs text-textSecondary hover:text-white transition-colors">← Prev</button>
+              <span class="px-3 py-1.5 text-xs text-textSecondary" id="prospects-page">Page 1</span>
+              <button onclick="nextPage('prospects')" class="px-3 py-1.5 bg-surfaceHover border border-border rounded text-xs text-textSecondary hover:text-white transition-colors">Next →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMAILS TAB -->
+      <div id="tab-emails" class="hidden fade-in">
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-textPrimary">Emails Written</h1>
+            <p class="text-textSecondary text-sm">Every AI-generated email with scores and content.</p>
+          </div>
+          <div class="flex gap-2">
+            <select id="email-tier-filter" onchange="filterEmails()" class="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-textSecondary focus:outline-none focus:border-accent">
+              <option value="">All Tiers</option>
+              <option value="hot">Hot</option>
+              <option value="warm">Warm</option>
+              <option value="cold">Cold</option>
+              <option value="bad_match">Bad Match</option>
+            </select>
+            <select id="email-writer-filter" onchange="filterEmails()" class="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-textSecondary focus:outline-none focus:border-accent">
+              <option value="">AI + Human</option>
+              <option value="ai">AI Only</option>
+              <option value="human">Human Only</option>
+            </select>
+          </div>
+        </div>
+        <div class="bg-surface border border-border rounded-xl overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-border">
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Prospect</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Subject</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Tier</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Score</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Written By</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Status</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Date</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium"></th>
+              </tr>
+            </thead>
+            <tbody id="emails-body">
+              <tr><td colspan="8" class="px-4 py-8 text-center text-textSecondary">
+                <div class="flex items-center justify-center gap-2">
+                  <svg class="spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  Loading emails...
+                </div>
+              </td></tr>
+            </tbody>
+          </table>
+          <div class="px-4 py-3 border-t border-border flex items-center justify-between">
+            <span class="text-xs text-textSecondary" id="emails-count">—</span>
+            <div class="flex gap-2">
+              <button onclick="prevPage('emails')" class="px-3 py-1.5 bg-surfaceHover border border-border rounded text-xs text-textSecondary hover:text-white transition-colors">← Prev</button>
+              <span class="px-3 py-1.5 text-xs text-textSecondary" id="emails-page">Page 1</span>
+              <button onclick="nextPage('emails')" class="px-3 py-1.5 bg-surfaceHover border border-border rounded text-xs text-textSecondary hover:text-white transition-colors">Next →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPLIES TAB -->
+      <div id="tab-replies" class="hidden fade-in">
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-textPrimary">Replies</h1>
+            <p class="text-textSecondary text-sm">Smartlead reply feed — step number, AI vs human, classification.</p>
+          </div>
+          <select id="reply-type-filter" onchange="filterReplies()" class="px-3 py-2 bg-surface border border-border rounded-lg text-sm text-textSecondary focus:outline-none focus:border-accent">
+            <option value="">All Types</option>
+            <option value="interested">Interested</option>
+            <option value="not_interested">Not Interested</option>
+            <option value="out_of_office">Out of Office</option>
+            <option value="referral">Referral</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="space-y-3" id="replies-list">
+          <div class="skeleton h-24"></div>
+          <div class="skeleton h-24"></div>
+          <div class="skeleton h-24"></div>
+          <div class="skeleton h-24"></div>
+        </div>
+      </div>
+
+      <!-- DEDUP TAB -->
+      <div id="tab-dedup" class="hidden fade-in">
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-textPrimary">Dedup Log</h1>
+            <p class="text-textSecondary text-sm">Prospects skipped because their email already exists.</p>
+          </div>
+        </div>
+        <div class="bg-surface border border-border rounded-xl overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-border">
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Email Attempted</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Reason</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Existing Name</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Existing Company</th>
+                <th class="px-4 py-3 text-left text-textSecondary font-medium">Logged At</th>
+              </tr>
+            </thead>
+            <tbody id="dedup-body">
+              <tr><td colspan="5" class="px-4 py-8 text-center text-textSecondary">
+                <div class="flex items-center justify-center gap-2">
+                  <svg class="spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  Loading...
+                </div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL PREVIEW MODAL -->
+<div id="email-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
+  <div class="bg-surface border border-border rounded-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+    <div class="flex justify-between items-center px-6 py-4 border-b border-border">
+      <h3 class="font-semibold text-textPrimary" id="modal-title">Email Preview</h3>
+      <button onclick="closeModal()" class="text-textSecondary hover:text-white transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div class="bg-background rounded-lg p-4 border border-border">
+        <p class="text-xs text-textSecondary mb-1">Subject</p>
+        <p class="text-white font-medium" id="modal-subject">—</p>
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-background rounded-lg p-3 border border-border text-center">
+          <p class="text-xs text-textSecondary mb-1">ICP Score</p>
+          <p class="text-accent font-bold text-lg" id="modal-score">—</p>
+        </div>
+        <div class="bg-background rounded-lg p-3 border border-border text-center">
+          <p class="text-xs text-textSecondary mb-1">Tier</p>
+          <p class="font-medium" id="modal-tier">—</p>
+        </div>
+        <div class="bg-background rounded-lg p-3 border border-border text-center">
+          <p class="text-xs text-textSecondary mb-1">Written By</p>
+          <p class="font-medium" id="modal-writer">—</p>
+        </div>
+      </div>
+      <div class="bg-background rounded-lg p-4 border border-border">
+        <p class="text-xs text-textSecondary mb-2">Key Insight Used</p>
+        <p class="text-white text-sm italic" id="modal-insight">—</p>
+      </div>
+      <div class="bg-background rounded-lg p-4 border border-border">
+        <p class="text-xs text-textSecondary mb-3">Email Body</p>
+        <p class="text-white text-sm leading-relaxed whitespace-pre-line" id="modal-body">—</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  // ── CONFIG ──────────────────────────────────────────────────
+  const SUPABASE_URL = 'https://cvmetxejxupubusvuxhr.supabase.co';
+  // IMPORTANT: Replace with your anon key from Supabase → Settings → API
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+
+  const PAGE_SIZE = 50;
+  const state = {
+    prospects: [], prospectsFiltered: [], prospectsPage: 1,
+    emails: [], emailsFiltered: [], emailsPage: 1,
+    replies: [], repliesFiltered: [],
+    dedup: [],
+    stats: null
+  };
+
+  // ── SUPABASE FETCH HELPER ────────────────────────────────────
+  async function sb(path, params = {}) {
+    const url = new URL(`${SUPABASE_URL}/rest/v1/${path}`);
+    Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+    const res = await fetch(url, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Accept': 'application/json'
+      }
+    });
+    if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
+    return res.json();
+  }
+
+  // ── NAV ──────────────────────────────────────────────────────
+  window.showTab = function(tab) {
+    ['dashboard','prospects','emails','replies','dedup'].forEach(t => {
+      document.getElementById(`tab-${t}`).classList.add('hidden');
+      const btn = document.getElementById(`nav-${t}`);
+      btn.classList.remove('bg-surfaceHover','text-accent','border-l-2','border-accent');
+      btn.classList.add('text-textSecondary','hover:bg-surfaceHover','hover:text-white');
+    });
+    document.getElementById(`tab-${tab}`).classList.remove('hidden');
+    const activeBtn = document.getElementById(`nav-${tab}`);
+    activeBtn.classList.add('bg-surfaceHover','text-accent','border-l-2','border-accent');
+    activeBtn.classList.remove('text-textSecondary','hover:bg-surfaceHover','hover:text-white');
+  }
+
+  // ── LOAD ALL DATA ────────────────────────────────────────────
+  window.loadAll = async function() {
+    try {
+      document.getElementById('status-dot').classList.add('spin');
+      document.getElementById('status-dot').style.background = '#fbbf24';
+      document.getElementById('status-text').textContent = 'Loading...';
+
+      const [prospects, emails, replies, dedup, stats] = await Promise.all([
+        sb('prospects', { select: 'id,email,first_name,last_name,company_name,job_title,tier,icp_score,status,created_at', order: 'created_at.desc', limit: 1000 }),
+        sb('emails', { select: 'id,prospect_id,subject,body,tier,icp_score,key_insight,tone_used,match_level,written_by,status,created_at,personalisation_used', order: 'created_at.desc', limit: 1000 }),
+        sb('replies', { select: 'id,prospect_id,reply_body,reply_subject,sequence_step,step_written_by,reply_type,replied_at,smartlead_campaign_id', order: 'replied_at.desc', limit: 500 }),
+        sb('dedup_log', { select: 'id,email,reason,attempted_data,created_at', order: 'created_at.desc', limit: 500 }),
+        sb('outreach_stats', { select: '*', limit: 1 })
+      ]);
+
+      state.prospects = prospects;
+      state.prospectsFiltered = prospects;
+      state.emails = emails;
+      state.emailsFiltered = emails;
+      state.replies = replies;
+      state.repliesFiltered = replies;
+      state.dedup = dedup;
+      state.stats = stats[0] || {};
+
+      renderDashboard();
+      renderProspects();
+      renderEmails();
+      renderReplies();
+      renderDedup();
+
+      document.getElementById('status-dot').classList.remove('spin');
+      document.getElementById('status-dot').style.background = '#10b981';
+      document.getElementById('status-text').textContent = 'Connected';
+    } catch(e) {
+      document.getElementById('status-dot').style.background = '#ef4444';
+      document.getElementById('status-dot').classList.remove('spin');
+      document.getElementById('status-text').textContent = 'Error — check key';
+      console.error(e);
+    }
+  }
+
+  // ── DASHBOARD ────────────────────────────────────────────────
+  function renderDashboard() {
+    const s = state.stats;
+    const cards = [
+      { title: 'Total Prospects', value: (s.total_prospects||0).toLocaleString(), sub: `${(s.total_emailed||0).toLocaleString()} emailed`, icon: 'users' },
+      { title: 'Emails Written', value: (s.total_emails_written||0).toLocaleString(), sub: `${s.ai_written||0} AI · ${s.human_written||0} human`, icon: 'mail' },
+      { title: 'Total Replies', value: (s.total_replies||0).toLocaleString(), sub: `${s.positive_replies||0} interested`, icon: 'reply' },
+      { title: 'Reply Rate', value: `${s.reply_rate_pct||0}%`, sub: 'of sent emails', icon: 'chart' },
+    ];
+    document.getElementById('stat-cards').innerHTML = cards.map(c => `
+      <div class="bg-surface border border-border p-5 rounded-xl">
+        <p class="text-textSecondary text-xs font-medium mb-3">${c.title}</p>
+        <p class="text-2xl font-bold text-textPrimary mb-1">${c.value}</p>
+        <p class="text-xs text-textSecondary">${c.sub}</p>
+      </div>
+    `).join('');
+
+    // Tier chart
+    const tiers = [
+      { label: 'Hot (≥65)', key: 'hot_count', color: '#ef4444', max: s.total_emails_written||1 },
+      { label: 'Warm (45-64)', key: 'warm_count', color: '#fbbf24', max: s.total_emails_written||1 },
+      { label: 'Cold (20-44)', key: 'cold_count', color: '#60a5fa', max: s.total_emails_written||1 },
+    ];
+    document.getElementById('tier-chart').innerHTML = tiers.map(t => {
+      const val = s[t.key] || 0;
+      const pct = Math.round((val / (s.total_emails_written||1)) * 100);
+      return `
+        <div>
+          <div class="flex justify-between text-xs mb-1">
+            <span class="text-textSecondary">${t.label}</span>
+            <span class="text-white font-medium">${val.toLocaleString()} (${pct}%)</span>
+          </div>
+          <div class="h-2 bg-surfaceHover rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all" style="width:${pct}%;background:${t.color}"></div>
+          </div>
+        </div>`;
+    }).join('');
+
+    // Reply chart
+    const replyTypes = ['interested','not_interested','out_of_office','other'];
+    const replyCounts = {};
+    state.replies.forEach(r => { replyCounts[r.reply_type] = (replyCounts[r.reply_type]||0)+1; });
+    const totalReplies = state.replies.length || 1;
+    const replyColors = { interested:'#10b981', not_interested:'#ef4444', out_of_office:'#fbbf24', other:'#a0a0a0' };
+    document.getElementById('reply-chart').innerHTML = replyTypes.map(t => {
+      const val = replyCounts[t] || 0;
+      const pct = Math.round((val/totalReplies)*100);
+      return `
+        <div>
+          <div class="flex justify-between text-xs mb-1">
+            <span class="text-textSecondary capitalize">${t.replace('_',' ')}</span>
+            <span class="text-white font-medium">${val} (${pct}%)</span>
+          </div>
+          <div class="h-2 bg-surfaceHover rounded-full overflow-hidden">
+            <div class="h-full rounded-full" style="width:${pct}%;background:${replyColors[t]}"></div>
+          </div>
+        </div>`;
+    }).join('');
+
+    // Recent replies
+    const recent = state.replies.slice(0,5);
+    document.getElementById('recent-replies').innerHTML = recent.length ? recent.map(r => `
+      <div class="flex items-start gap-3 p-3 bg-background rounded-lg border border-border">
+        <span class="px-2 py-0.5 rounded text-xs font-medium reply-${r.reply_type||'other'} mt-0.5 shrink-0">${(r.reply_type||'other').replace('_',' ')}</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-white text-sm truncate">${r.reply_body ? r.reply_body.substring(0,100)+'...' : 'No content'}</p>
+          <p class="text-xs text-textSecondary mt-0.5">Step ${r.sequence_step||1} · ${r.step_written_by||'ai'} written · ${formatDate(r.replied_at)}</p>
+        </div>
+      </div>
+    `).join('') : '<p class="text-textSecondary text-sm text-center py-4">No replies yet.</p>';
+  }
+
+  // ── PROSPECTS ────────────────────────────────────────────────
+  function renderProspects() {
+    const start = (state.prospectsPage-1)*PAGE_SIZE;
+    const page = state.prospectsFiltered.slice(start, start+PAGE_SIZE);
+    document.getElementById('prospects-count').textContent = `${state.prospectsFiltered.length.toLocaleString()} prospects`;
+    document.getElementById('prospects-page').textContent = `Page ${state.prospectsPage}`;
+    document.getElementById('prospects-body').innerHTML = page.length ? page.map(p => `
+      <tr class="border-b border-border hover:bg-surfaceHover transition-colors">
+        <td class="px-4 py-3 text-white font-medium">${p.first_name||''} ${p.last_name||''}</td>
+        <td class="px-4 py-3 text-textSecondary">${p.company_name||'—'}</td>
+        <td class="px-4 py-3 text-textSecondary text-xs">${p.email}</td>
+        <td class="px-4 py-3"><span class="px-2 py-0.5 rounded border text-xs font-medium tier-${p.tier||'bad'}">${p.tier||'—'}</span></td>
+        <td class="px-4 py-3 text-accent font-medium">${p.icp_score||'—'}</td>
+        <td class="px-4 py-3"><span class="px-2 py-0.5 rounded border text-xs status-${p.status||'new'}">${p.status||'new'}</span></td>
+        <td class="px-4 py-3 text-textSecondary text-xs">${formatDate(p.created_at)}</td>
+        <td class="px-4 py-3">
+          <button onclick="viewProspectEmails('${p.id}')" class="text-xs text-accent hover:underline">Emails →</button>
+        </td>
+      </tr>
+    `).join('') : '<tr><td colspan="8" class="px-4 py-8 text-center text-textSecondary">No prospects found.</td></tr>';
+  }
+
+  window.filterProspects = function() {
+    const search = document.getElementById('prospect-search').value.toLowerCase();
+    const status = document.getElementById('prospect-status-filter').value;
+    const tier = document.getElementById('prospect-tier-filter').value;
+    state.prospectsFiltered = state.prospects.filter(p => {
+      const matchSearch = !search || (p.email||'').toLowerCase().includes(search) || (p.first_name||'').toLowerCase().includes(search) || (p.last_name||'').toLowerCase().includes(search) || (p.company_name||'').toLowerCase().includes(search);
+      const matchStatus = !status || p.status === status;
+      const matchTier = !tier || p.tier === tier;
+      return matchSearch && matchStatus && matchTier;
+    });
+    state.prospectsPage = 1;
+    renderProspects();
+  }
+
+  window.viewProspectEmails = function(prospectId) {
+    document.getElementById('email-tier-filter').value = '';
+    document.getElementById('email-writer-filter').value = '';
+    state.emailsFiltered = state.emails.filter(e => e.prospect_id === prospectId);
+    state.emailsPage = 1;
+    renderEmails();
+    showTab('emails');
+  }
+
+  // ── EMAILS ───────────────────────────────────────────────────
+  function renderEmails() {
+    const start = (state.emailsPage-1)*PAGE_SIZE;
+    const page = state.emailsFiltered.slice(start, start+PAGE_SIZE);
+    document.getElementById('emails-count').textContent = `${state.emailsFiltered.length.toLocaleString()} emails`;
+    document.getElementById('emails-page').textContent = `Page ${state.emailsPage}`;
+    document.getElementById('emails-body').innerHTML = page.length ? page.map(e => `
+      <tr class="border-b border-border hover:bg-surfaceHover transition-colors">
+        <td class="px-4 py-3 text-textSecondary text-xs">${e.prospect_id ? e.prospect_id.substring(0,8)+'…' : '—'}</td>
+        <td class="px-4 py-3 text-white max-w-xs truncate">${e.subject||'—'}</td>
+        <td class="px-4 py-3"><span class="px-2 py-0.5 rounded border text-xs font-medium tier-${e.tier||'bad'}">${e.tier||'—'}</span></td>
+        <td class="px-4 py-3 text-accent font-medium">${e.icp_score||'—'}</td>
+        <td class="px-4 py-3">
+          <span class="px-2 py-0.5 rounded text-xs font-medium ${e.written_by==='ai' ? 'bg-purple-500/10 text-purple-400' : 'bg-green-500/10 text-green-400'}">${e.written_by||'ai'}</span>
+        </td>
+        <td class="px-4 py-3"><span class="px-2 py-0.5 rounded border text-xs status-${e.status||'draft'}">${e.status||'draft'}</span></td>
+        <td class="px-4 py-3 text-textSecondary text-xs">${formatDate(e.created_at)}</td>
+        <td class="px-4 py-3">
+          <button onclick='openEmailModal(${JSON.stringify(e).replace(/'/g,"&#39;")})' class="text-xs text-accent hover:underline">View →</button>
+        </td>
+      </tr>
+    `).join('') : '<tr><td colspan="8" class="px-4 py-8 text-center text-textSecondary">No emails found.</td></tr>';
+  }
+
+  window.filterEmails = function() {
+    const tier = document.getElementById('email-tier-filter').value;
+    const writer = document.getElementById('email-writer-filter').value;
+    state.emailsFiltered = state.emails.filter(e => (!tier||e.tier===tier) && (!writer||e.written_by===writer));
+    state.emailsPage = 1;
+    renderEmails();
+  }
+
+  window.openEmailModal = function(email) {
+    document.getElementById('modal-title').textContent = email.subject || 'Email Preview';
+    document.getElementById('modal-subject').textContent = email.subject || '—';
+    document.getElementById('modal-score').textContent = email.icp_score || '—';
+    document.getElementById('modal-tier').textContent = email.tier || '—';
+    document.getElementById('modal-writer').textContent = email.written_by || 'ai';
+    document.getElementById('modal-insight').textContent = email.key_insight || email.personalisation_used || '—';
+    document.getElementById('modal-body').textContent = email.body || '—';
+    document.getElementById('email-modal').classList.remove('hidden');
+  }
+
+  window.closeModal = function() {
+    document.getElementById('email-modal').classList.add('hidden');
+  }
+
+  // ── REPLIES ──────────────────────────────────────────────────
+  function renderReplies() {
+    const typeColors = { interested:'text-success', not_interested:'text-error', out_of_office:'text-accent', referral:'text-blue-400', other:'text-textSecondary' };
+    document.getElementById('replies-list').innerHTML = state.repliesFiltered.length ? state.repliesFiltered.map(r => `
+      <div class="bg-surface border border-border rounded-xl p-4 fade-in">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="px-2 py-0.5 rounded text-xs font-medium reply-${r.reply_type||'other'}">${(r.reply_type||'other').replace(/_/g,' ')}</span>
+              <span class="text-xs text-textSecondary">Step ${r.sequence_step||1}</span>
+              <span class="px-2 py-0.5 rounded text-xs ${r.step_written_by==='ai' ? 'bg-purple-500/10 text-purple-400' : 'bg-green-500/10 text-green-400'}">${r.step_written_by||'ai'} written</span>
+              ${r.smartlead_campaign_id ? `<span class="text-xs text-textSecondary">Campaign: ${r.smartlead_campaign_id}</span>` : ''}
+            </div>
+            <p class="text-white text-sm leading-relaxed">${r.reply_body ? r.reply_body.substring(0,300) : 'No content'}${r.reply_body && r.reply_body.length>300?'…':''}</p>
+          </div>
+          <p class="text-xs text-textSecondary shrink-0">${formatDate(r.replied_at)}</p>
+        </div>
+      </div>
+    `).join('') : '<p class="text-textSecondary text-center py-12">No replies yet. Set up the Smartlead webhook in n8n to start tracking.</p>';
+  }
+
+  window.filterReplies = function() {
+    const type = document.getElementById('reply-type-filter').value;
+    state.repliesFiltered = type ? state.replies.filter(r => r.reply_type===type) : state.replies;
+    renderReplies();
+  }
+
+  // ── DEDUP ────────────────────────────────────────────────────
+  function renderDedup() {
+    document.getElementById('dedup-body').innerHTML = state.dedup.length ? state.dedup.map(d => `
+      <tr class="border-b border-border hover:bg-surfaceHover transition-colors">
+        <td class="px-4 py-3 text-white text-xs">${d.email}</td>
+        <td class="px-4 py-3"><span class="px-2 py-0.5 bg-error/10 text-error rounded text-xs">${d.reason}</span></td>
+        <td class="px-4 py-3 text-textSecondary text-xs">${d.attempted_data?.first_name||'—'} ${d.attempted_data?.last_name||''}</td>
+        <td class="px-4 py-3 text-textSecondary text-xs">${d.attempted_data?.company_name||'—'}</td>
+        <td class="px-4 py-3 text-textSecondary text-xs">${formatDate(d.created_at)}</td>
+      </tr>
+    `).join('') : '<tr><td colspan="5" class="px-4 py-8 text-center text-textSecondary">No duplicates logged yet.</td></tr>';
+  }
+
+  // ── PAGINATION ───────────────────────────────────────────────
+  window.nextPage = function(type) {
+    if (type==='prospects') { state.prospectsPage++; renderProspects(); }
+    if (type==='emails') { state.emailsPage++; renderEmails(); }
+  }
+  window.prevPage = function(type) {
+    if (type==='prospects' && state.prospectsPage>1) { state.prospectsPage--; renderProspects(); }
+    if (type==='emails' && state.emailsPage>1) { state.emailsPage--; renderEmails(); }
+  }
+
+  // ── UTILS ────────────────────────────────────────────────────
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  // Close modal on overlay click
+  document.getElementById('email-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ── INIT ─────────────────────────────────────────────────────
+  showTab('dashboard');
+  loadAll();
+</script>
+</body>
+</html>
