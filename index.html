@@ -58,7 +58,38 @@
 </head>
 <body>
 
-<div id="app" class="flex h-screen overflow-hidden">
+<!-- AUTH GATE -->
+<div id="auth-gate" class="fixed inset-0 z-[100] flex items-center justify-center" style="background:#0a0a0a">
+  <div class="w-full max-w-sm px-8 py-10 bg-surface border border-border rounded-2xl shadow-2xl">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-9 h-9 bg-accent rounded-lg flex items-center justify-center">
+        <span class="text-black font-bold text-xl">R</span>
+      </div>
+      <div>
+        <p class="text-white font-bold text-lg leading-tight">Realtrix</p>
+        <p class="text-textSecondary text-xs">Outreach Hub</p>
+      </div>
+    </div>
+    <p class="text-textSecondary text-sm mb-6">Enter your access password to continue.</p>
+    <input
+      id="auth-input"
+      type="password"
+      placeholder="Password"
+      onkeydown="if(event.key==='Enter')checkAuth()"
+      class="w-full px-4 py-3 bg-background border border-border rounded-lg text-white placeholder-textSecondary text-sm focus:outline-none focus:border-accent mb-3"
+      autofocus
+    />
+    <p id="auth-error" class="text-error text-xs mb-3 hidden">Incorrect password. Try again.</p>
+    <button
+      onclick="checkAuth()"
+      class="w-full py-3 bg-accent text-black font-semibold rounded-lg text-sm hover:bg-accentHover transition-colors"
+    >
+      Unlock
+    </button>
+  </div>
+</div>
+
+<div id="app" class="flex h-screen overflow-hidden" style="display:none!important">
 
   <!-- SIDEBAR -->
   <div class="w-64 h-screen bg-background border-r border-border flex flex-col fixed left-0 top-0 z-50">
@@ -691,9 +722,31 @@
     if (e.target === this) closeModal();
   });
 
+  // ── AUTH ─────────────────────────────────────────────────────
+  const SITE_PASSWORD = 'realtrix2025';
+
+  window.checkAuth = function() {
+    const val = document.getElementById('auth-input').value;
+    if (val === SITE_PASSWORD) {
+      sessionStorage.setItem('rtx_auth', '1');
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('app').style.cssText = '';
+      showTab('dashboard');
+      loadAll();
+    } else {
+      document.getElementById('auth-error').classList.remove('hidden');
+      document.getElementById('auth-input').value = '';
+      document.getElementById('auth-input').focus();
+    }
+  }
+
   // ── INIT ─────────────────────────────────────────────────────
-  showTab('dashboard');
-  loadAll();
+  if (sessionStorage.getItem('rtx_auth') === '1') {
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('app').style.cssText = '';
+    showTab('dashboard');
+    loadAll();
+  }
 </script>
 </body>
 </html>
