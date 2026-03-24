@@ -425,17 +425,36 @@
           <div class="bg-surface border border-border rounded-xl p-5 space-y-4">
             <p class="text-sm font-semibold text-white">Email Steps (up to 3)</p>
             <div class="space-y-4">
-              ${[1,2,3].map(i => `
               <div class="border border-border rounded-lg overflow-hidden">
                 <div class="flex items-center gap-3 px-4 py-2.5 bg-background border-b border-border">
-                  <span class="w-5 h-5 rounded-full ${i===1?'bg-accent text-black':'bg-surfaceHover border border-border text-textSecondary'} text-xs font-bold flex items-center justify-center">${i}</span>
-                  <span class="text-sm font-medium ${i===1?'text-white':'text-textSecondary'}">Step ${i}${i>1?' <span class="text-xs">(optional)</span>':''}</span>
+                  <span class="w-5 h-5 rounded-full bg-accent text-black text-xs font-bold flex items-center justify-center">1</span>
+                  <span class="text-sm font-medium text-white">Step 1</span>
                 </div>
                 <div class="p-4 space-y-3">
-                  <input id="tmpl-step${i}-subject" type="text" placeholder="Subject line" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
-                  <textarea id="tmpl-step${i}-body" rows="5" placeholder="Email body..." class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent resize-none"></textarea>
+                  <input id="tmpl-step1-subject" type="text" placeholder="Subject line" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
+                  <textarea id="tmpl-step1-body" rows="5" placeholder="Email body..." class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent resize-none"></textarea>
                 </div>
-              </div>`).join('')}
+              </div>
+              <div class="border border-border rounded-lg overflow-hidden">
+                <div class="flex items-center gap-3 px-4 py-2.5 bg-background border-b border-border">
+                  <span class="w-5 h-5 rounded-full bg-surfaceHover border border-border text-textSecondary text-xs font-bold flex items-center justify-center">2</span>
+                  <span class="text-sm font-medium text-textSecondary">Step 2 <span class="text-xs">(optional)</span></span>
+                </div>
+                <div class="p-4 space-y-3">
+                  <input id="tmpl-step2-subject" type="text" placeholder="Subject line" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
+                  <textarea id="tmpl-step2-body" rows="5" placeholder="Email body..." class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent resize-none"></textarea>
+                </div>
+              </div>
+              <div class="border border-border rounded-lg overflow-hidden">
+                <div class="flex items-center gap-3 px-4 py-2.5 bg-background border-b border-border">
+                  <span class="w-5 h-5 rounded-full bg-surfaceHover border border-border text-textSecondary text-xs font-bold flex items-center justify-center">3</span>
+                  <span class="text-sm font-medium text-textSecondary">Step 3 <span class="text-xs">(optional)</span></span>
+                </div>
+                <div class="p-4 space-y-3">
+                  <input id="tmpl-step3-subject" type="text" placeholder="Subject line" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
+                  <textarea id="tmpl-step3-body" rows="5" placeholder="Email body..." class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent resize-none"></textarea>
+                </div>
+              </div>
             </div>
           </div>
 
