@@ -372,181 +372,89 @@
         </div>
       </div>
 
-      <!-- SEQUENCES TAB -->
+      <!-- SEQUENCES TAB — TEMPLATES ONLY -->
       <div id="tab-sequences" class="hidden fade-in">
         <div class="flex justify-between items-center mb-6">
           <div>
-            <h1 class="text-2xl font-bold text-textPrimary">Sequences</h1>
-            <p class="text-textSecondary text-sm">Manually enrol prospects into sequences and push to the database.</p>
+            <h1 class="text-2xl font-bold text-textPrimary">Sequence Templates</h1>
+            <p class="text-textSecondary text-sm">Save reusable email sequences as templates. No prospect required.</p>
           </div>
+          <button onclick="seqShowForm(true)" id="seq-new-btn" class="flex items-center gap-2 px-4 py-2 bg-accent text-black rounded-lg text-sm font-medium hover:bg-accentHover transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Template
+          </button>
         </div>
 
-        <!-- MODE TOGGLE -->
-        <div class="flex gap-2 mb-6">
-          <button onclick="seqMode('single')" id="seq-mode-single" class="px-4 py-2 rounded-lg text-sm font-medium bg-accent text-black transition-colors">Single Entry</button>
-          <button onclick="seqMode('bulk')" id="seq-mode-bulk" class="px-4 py-2 rounded-lg text-sm font-medium bg-surface border border-border text-textSecondary hover:text-white transition-colors">Bulk Paste</button>
-        </div>
-
-        <!-- SINGLE ENTRY FORM -->
-        <div id="seq-single" class="space-y-5">
+        <!-- TEMPLATE FORM (hidden by default) -->
+        <div id="seq-form" class="hidden space-y-5 mb-8">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div class="bg-surface border border-border rounded-xl p-5 space-y-4">
-              <p class="text-sm font-semibold text-white">Campaign Info</p>
+              <p class="text-sm font-semibold text-white">Template Info</p>
               <div>
-                <label class="text-xs text-textSecondary mb-1 block">Campaign Name *</label>
-                <input id="seq-campaign-name" type="text" placeholder="e.g. SA Accounting Firms - Wave 1" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
+                <label class="text-xs text-textSecondary mb-1 block">Template Name *</label>
+                <input id="tmpl-name" type="text" placeholder="e.g. SA Accounting — 3-Step Cold" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
               </div>
               <div>
                 <label class="text-xs text-textSecondary mb-1 block">Niche</label>
-                <input id="seq-niche" type="text" placeholder="e.g. accounting, law, it_services" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
-              </div>
-              <div>
-                <label class="text-xs text-textSecondary mb-1 block">Smartlead Campaign ID</label>
-                <input id="seq-campaign-id" type="text" placeholder="From Smartlead dashboard" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
+                <input id="tmpl-niche" type="text" placeholder="e.g. accounting, law, it_services" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
               </div>
               <div>
                 <label class="text-xs text-textSecondary mb-1 block">Geography</label>
-                <input id="seq-geography" type="text" placeholder="e.g. ZA, UK" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
+                <input id="tmpl-geography" type="text" placeholder="e.g. ZA, UK" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
+              </div>
+              <div>
+                <label class="text-xs text-textSecondary mb-1 block">Description</label>
+                <textarea id="tmpl-description" rows="3" placeholder="What's this template for? Tone, target audience, etc." class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent resize-none"></textarea>
               </div>
             </div>
-            <div class="bg-surface border border-border rounded-xl p-5 space-y-4">
-              <p class="text-sm font-semibold text-white">Prospect</p>
-              <div>
-                <label class="text-xs text-textSecondary mb-1 block">Email * <span class="text-accent">(must exist in prospects table)</span></label>
-                <input id="seq-prospect-email" type="email" placeholder="prospect@company.com" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" onkeydown="if(event.key==='Enter')lookupProspect()" />
-              </div>
-              <div id="seq-prospect-preview" class="hidden p-3 bg-background border border-border rounded-lg">
-                <p class="text-xs text-textSecondary mb-1">Matched Prospect</p>
-                <p class="text-sm text-white font-medium" id="seq-prospect-name">—</p>
-                <p class="text-xs text-textSecondary" id="seq-prospect-company">—</p>
-              </div>
-              <button onclick="lookupProspect()" class="px-3 py-2 bg-surfaceHover border border-border rounded-lg text-xs text-textSecondary hover:text-white transition-colors">Look up prospect →</button>
-              <div>
-                <label class="text-xs text-textSecondary mb-1 block">Sending Email</label>
-                <input id="seq-sending-email" type="email" placeholder="outreach@yourdomain.com" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
-              </div>
-              <div>
-                <label class="text-xs text-textSecondary mb-1 block">Sending Domain</label>
-                <input id="seq-sending-domain" type="text" placeholder="yourdomain.com" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
+            <div class="bg-surface border border-border rounded-xl p-5 space-y-3">
+              <p class="text-sm font-semibold text-white">Variable hints</p>
+              <p class="text-xs text-textSecondary leading-relaxed">Use these placeholders in your email copy — they get swapped at send time:</p>
+              <div class="space-y-1.5 font-mono text-xs">
+                <div class="flex gap-2"><span class="text-accent">{{first_name}}</span><span class="text-textSecondary">— prospect first name</span></div>
+                <div class="flex gap-2"><span class="text-accent">{{company}}</span><span class="text-textSecondary">— company name</span></div>
+                <div class="flex gap-2"><span class="text-accent">{{job_title}}</span><span class="text-textSecondary">— job title</span></div>
+                <div class="flex gap-2"><span class="text-accent">{{sender_name}}</span><span class="text-textSecondary">— your name</span></div>
+                <div class="flex gap-2"><span class="text-accent">{{industry}}</span><span class="text-textSecondary">— industry</span></div>
+                <div class="flex gap-2"><span class="text-accent">{{city}}</span><span class="text-textSecondary">— city</span></div>
               </div>
             </div>
           </div>
 
-          <!-- SEQUENCE STEPS -->
-          <div class="bg-surface border border-border rounded-xl p-5 space-y-5">
-            <p class="text-sm font-semibold text-white">Sequence Steps (up to 3)</p>
+          <!-- STEPS -->
+          <div class="bg-surface border border-border rounded-xl p-5 space-y-4">
+            <p class="text-sm font-semibold text-white">Email Steps (up to 3)</p>
             <div class="space-y-4">
+              ${[1,2,3].map(i => `
               <div class="border border-border rounded-lg overflow-hidden">
                 <div class="flex items-center gap-3 px-4 py-2.5 bg-background border-b border-border">
-                  <span class="w-5 h-5 rounded-full bg-accent text-black text-xs font-bold flex items-center justify-center">1</span>
-                  <span class="text-sm font-medium text-white">Step 1</span>
+                  <span class="w-5 h-5 rounded-full ${i===1?'bg-accent text-black':'bg-surfaceHover border border-border text-textSecondary'} text-xs font-bold flex items-center justify-center">${i}</span>
+                  <span class="text-sm font-medium ${i===1?'text-white':'text-textSecondary'}">Step ${i}${i>1?' <span class="text-xs">(optional)</span>':''}</span>
                 </div>
                 <div class="p-4 space-y-3">
-                  <input id="seq-step1-subject" type="text" placeholder="Subject line" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
-                  <textarea id="seq-step1-body" rows="4" placeholder="Email body..." class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent resize-none"></textarea>
+                  <input id="tmpl-step${i}-subject" type="text" placeholder="Subject line" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
+                  <textarea id="tmpl-step${i}-body" rows="5" placeholder="Email body..." class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent resize-none"></textarea>
                 </div>
-              </div>
-              <div class="border border-border rounded-lg overflow-hidden">
-                <div class="flex items-center gap-3 px-4 py-2.5 bg-background border-b border-border">
-                  <span class="w-5 h-5 rounded-full bg-surfaceHover border border-border text-textSecondary text-xs font-bold flex items-center justify-center">2</span>
-                  <span class="text-sm font-medium text-textSecondary">Step 2 <span class="text-xs">(optional)</span></span>
-                </div>
-                <div class="p-4 space-y-3">
-                  <input id="seq-step2-subject" type="text" placeholder="Subject line" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
-                  <textarea id="seq-step2-body" rows="4" placeholder="Email body..." class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent resize-none"></textarea>
-                </div>
-              </div>
-              <div class="border border-border rounded-lg overflow-hidden">
-                <div class="flex items-center gap-3 px-4 py-2.5 bg-background border-b border-border">
-                  <span class="w-5 h-5 rounded-full bg-surfaceHover border border-border text-textSecondary text-xs font-bold flex items-center justify-center">3</span>
-                  <span class="text-sm font-medium text-textSecondary">Step 3 <span class="text-xs">(optional)</span></span>
-                </div>
-                <div class="p-4 space-y-3">
-                  <input id="seq-step3-subject" type="text" placeholder="Subject line" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
-                  <textarea id="seq-step3-body" rows="4" placeholder="Email body..." class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent resize-none"></textarea>
-                </div>
-              </div>
+              </div>`).join('')}
             </div>
           </div>
 
           <div class="flex items-center gap-3">
-            <button onclick="submitSingleSequence()" class="px-6 py-2.5 bg-accent text-black font-semibold rounded-lg text-sm hover:bg-accentHover transition-colors">Push to Database</button>
-            <p id="seq-single-status" class="text-sm text-textSecondary"></p>
+            <button onclick="saveTemplate()" class="px-6 py-2.5 bg-accent text-black font-semibold rounded-lg text-sm hover:bg-accentHover transition-colors">Save Template</button>
+            <button onclick="seqShowForm(false)" class="px-4 py-2.5 bg-surface border border-border text-textSecondary rounded-lg text-sm hover:text-white transition-colors">Cancel</button>
+            <p id="tmpl-status" class="text-sm text-textSecondary"></p>
           </div>
         </div>
 
-        <!-- BULK PASTE FORM -->
-        <div id="seq-bulk" class="hidden space-y-5">
-          <div class="bg-surface border border-border rounded-xl p-5 space-y-4">
-            <p class="text-sm font-semibold text-white">Campaign Info (applies to all rows)</p>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div>
-                <label class="text-xs text-textSecondary mb-1 block">Campaign Name *</label>
-                <input id="bulk-campaign-name" type="text" placeholder="e.g. SA Accounting - Wave 1" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
-              </div>
-              <div>
-                <label class="text-xs text-textSecondary mb-1 block">Niche</label>
-                <input id="bulk-niche" type="text" placeholder="e.g. accounting" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
-              </div>
-              <div>
-                <label class="text-xs text-textSecondary mb-1 block">Smartlead Campaign ID</label>
-                <input id="bulk-campaign-id" type="text" placeholder="From Smartlead" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent" />
-              </div>
-            </div>
-          </div>
-          <div class="bg-surface border border-border rounded-xl p-5 space-y-4">
-            <div class="flex items-start justify-between">
-              <div>
-                <p class="text-sm font-semibold text-white mb-1">Paste Prospect Emails</p>
-                <p class="text-xs text-textSecondary">One email per line. Each must already exist in the prospects table.</p>
-              </div>
-              <button onclick="parseBulkEmails()" class="px-3 py-1.5 bg-accent text-black text-xs font-semibold rounded-lg hover:bg-accentHover transition-colors">Parse →</button>
-            </div>
-            <textarea id="bulk-emails-input" rows="8" placeholder="prospect1@firm.co.za&#10;prospect2@company.co.za&#10;prospect3@law.co.za" class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-white placeholder-textSecondary focus:outline-none focus:border-accent resize-none font-mono"></textarea>
-          </div>
-          <div id="bulk-preview" class="hidden bg-surface border border-border rounded-xl overflow-hidden">
-            <div class="px-5 py-3 border-b border-border flex items-center justify-between">
-              <p class="text-sm font-semibold text-white">Preview <span id="bulk-preview-count" class="text-textSecondary font-normal text-xs"></span></p>
-              <button onclick="submitBulkSequences()" class="px-4 py-1.5 bg-accent text-black text-xs font-semibold rounded-lg hover:bg-accentHover transition-colors">Push All to Database</button>
-            </div>
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="border-b border-border">
-                  <th class="px-4 py-2 text-left text-textSecondary font-medium text-xs">Email</th>
-                  <th class="px-4 py-2 text-left text-textSecondary font-medium text-xs">Name</th>
-                  <th class="px-4 py-2 text-left text-textSecondary font-medium text-xs">Company</th>
-                  <th class="px-4 py-2 text-left text-textSecondary font-medium text-xs">Status</th>
-                </tr>
-              </thead>
-              <tbody id="bulk-preview-body"></tbody>
-            </table>
-          </div>
-          <p id="seq-bulk-status" class="text-sm text-textSecondary"></p>
-        </div>
-
-        <!-- EXISTING SEQUENCES LIST -->
-        <div class="mt-8">
+        <!-- TEMPLATES LIST -->
+        <div id="seq-templates-list">
           <div class="flex items-center justify-between mb-4">
-            <p class="text-sm font-semibold text-white">Existing Sequences</p>
-            <button onclick="loadSequences()" class="text-xs text-accent hover:underline">Refresh</button>
+            <p class="text-sm font-semibold text-white">Saved Templates <span id="tmpl-count" class="text-textSecondary font-normal text-xs"></span></p>
+            <button onclick="loadTemplates()" class="text-xs text-accent hover:underline">Refresh</button>
           </div>
-          <div class="bg-surface border border-border rounded-xl overflow-hidden">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="border-b border-border">
-                  <th class="px-4 py-3 text-left text-textSecondary font-medium">Campaign</th>
-                  <th class="px-4 py-3 text-left text-textSecondary font-medium">Niche</th>
-                  <th class="px-4 py-3 text-left text-textSecondary font-medium">Geography</th>
-                  <th class="px-4 py-3 text-left text-textSecondary font-medium">Prospect</th>
-                  <th class="px-4 py-3 text-left text-textSecondary font-medium">Step</th>
-                  <th class="px-4 py-3 text-left text-textSecondary font-medium">Status</th>
-                  <th class="px-4 py-3 text-left text-textSecondary font-medium">Enrolled</th>
-                </tr>
-              </thead>
-              <tbody id="sequences-body">
-                <tr><td colspan="7" class="px-4 py-8 text-center text-textSecondary text-sm">Hit Refresh to load sequences.</td></tr>
-              </tbody>
-            </table>
+          <div id="tmpl-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="skeleton h-36 rounded-xl"></div>
+            <div class="skeleton h-36 rounded-xl"></div>
           </div>
         </div>
       </div>
@@ -636,205 +544,99 @@
     const activeBtn = document.getElementById(`nav-${tab}`);
     activeBtn.classList.add('bg-surfaceHover','text-accent','border-l-2','border-accent');
     activeBtn.classList.remove('text-textSecondary','hover:bg-surfaceHover','hover:text-white');
+    if (tab === 'sequences') loadTemplates();
   }
 
-  // ── SEQUENCES ────────────────────────────────────────────────
-  let seqLookedUpProspect = null;
-  let bulkParsedProspects = [];
-
-  window.seqMode = function(mode) {
-    document.getElementById('seq-single').classList.toggle('hidden', mode !== 'single');
-    document.getElementById('seq-bulk').classList.toggle('hidden', mode !== 'bulk');
-    document.getElementById('seq-mode-single').className = `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode==='single' ? 'bg-accent text-black' : 'bg-surface border border-border text-textSecondary hover:text-white'}`;
-    document.getElementById('seq-mode-bulk').className = `px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode==='bulk' ? 'bg-accent text-black' : 'bg-surface border border-border text-textSecondary hover:text-white'}`;
-  }
-
-  window.lookupProspect = async function() {
-    const email = document.getElementById('seq-prospect-email').value.trim().toLowerCase();
-    if (!email) return;
-    try {
-      const results = await sb('prospects', { select: 'id,first_name,last_name,company_name', email: `eq.${email}`, limit: 1 });
-      if (results.length) {
-        seqLookedUpProspect = results[0];
-        document.getElementById('seq-prospect-name').textContent = `${results[0].first_name||''} ${results[0].last_name||''}`.trim() || '—';
-        document.getElementById('seq-prospect-company').textContent = results[0].company_name || '—';
-        document.getElementById('seq-prospect-preview').classList.remove('hidden');
-      } else {
-        seqLookedUpProspect = null;
-        document.getElementById('seq-prospect-preview').classList.remove('hidden');
-        document.getElementById('seq-prospect-name').textContent = '⚠ Not found in prospects table';
-        document.getElementById('seq-prospect-company').textContent = 'Add this prospect first before creating a sequence.';
-      }
-    } catch(e) { console.error(e); }
-  }
-
-  async function insertEmailVariant(stepNum, subject, body, niche) {
-    if (!subject && !body) return null;
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/email_variants`, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify({
-        sequence_step: stepNum,
-        subject_line: subject || null,
-        body_text: body || null,
-        niche: niche || null,
-        variant_type: 'manual',
-        is_active: true
-      })
-    });
-    if (!res.ok) throw new Error(await res.text());
-    const data = await res.json();
-    return data[0].id;
-  }
-
-  async function insertSequence(payload) {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/sequences`, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) throw new Error(await res.text());
-    return res.json();
-  }
-
-  window.submitSingleSequence = async function() {
-    const status = document.getElementById('seq-single-status');
-    const campaignName = document.getElementById('seq-campaign-name').value.trim();
-    if (!campaignName) { status.textContent = '⚠ Campaign name is required.'; status.style.color = '#ef4444'; return; }
-    if (!seqLookedUpProspect) { status.textContent = '⚠ Look up a valid prospect first.'; status.style.color = '#ef4444'; return; }
-
-    status.textContent = 'Pushing...'; status.style.color = '#a0a0a0';
-    try {
-      const niche = document.getElementById('seq-niche').value.trim();
-      const [v1, v2, v3] = await Promise.all([
-        insertEmailVariant(1, document.getElementById('seq-step1-subject').value.trim(), document.getElementById('seq-step1-body').value.trim(), niche),
-        insertEmailVariant(2, document.getElementById('seq-step2-subject').value.trim(), document.getElementById('seq-step2-body').value.trim(), niche),
-        insertEmailVariant(3, document.getElementById('seq-step3-subject').value.trim(), document.getElementById('seq-step3-body').value.trim(), niche),
-      ]);
-      await insertSequence({
-        contact_id: seqLookedUpProspect.id,
-        campaign_name: campaignName,
-        niche: niche || null,
-        geography: document.getElementById('seq-geography').value.trim() || null,
-        smartlead_campaign_id: document.getElementById('seq-campaign-id').value.trim() || null,
-        sending_email: document.getElementById('seq-sending-email').value.trim() || null,
-        sending_domain: document.getElementById('seq-sending-domain').value.trim() || null,
-        email_variant_id_step1: v1,
-        email_variant_id_step2: v2,
-        email_variant_id_step3: v3,
-        enrolled_at: new Date().toISOString(),
-        status: 'active',
-        current_step: 0
+  // ── SEQUENCE TEMPLATES ───────────────────────────────────────
+  window.seqShowForm = function(show) {
+    document.getElementById('seq-form').classList.toggle('hidden', !show);
+    document.getElementById('seq-new-btn').classList.toggle('hidden', show);
+    if (!show) {
+      // clear form
+      ['tmpl-name','tmpl-niche','tmpl-geography','tmpl-description',
+       'tmpl-step1-subject','tmpl-step1-body',
+       'tmpl-step2-subject','tmpl-step2-body',
+       'tmpl-step3-subject','tmpl-step3-body'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
       });
-      status.textContent = '✓ Sequence pushed successfully.'; status.style.color = '#10b981';
-      loadSequences();
+      document.getElementById('tmpl-status').textContent = '';
+    }
+  }
+
+  window.saveTemplate = async function() {
+    const status = document.getElementById('tmpl-status');
+    const name = document.getElementById('tmpl-name').value.trim();
+    if (!name) { status.textContent = '⚠ Template name is required.'; status.style.color = '#ef4444'; return; }
+    status.textContent = 'Saving...'; status.style.color = '#a0a0a0';
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/sequence_templates`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
+          name,
+          niche: document.getElementById('tmpl-niche').value.trim() || null,
+          geography: document.getElementById('tmpl-geography').value.trim() || null,
+          description: document.getElementById('tmpl-description').value.trim() || null,
+          step1_subject: document.getElementById('tmpl-step1-subject').value.trim() || null,
+          step1_body: document.getElementById('tmpl-step1-body').value.trim() || null,
+          step2_subject: document.getElementById('tmpl-step2-subject').value.trim() || null,
+          step2_body: document.getElementById('tmpl-step2-body').value.trim() || null,
+          step3_subject: document.getElementById('tmpl-step3-subject').value.trim() || null,
+          step3_body: document.getElementById('tmpl-step3-body').value.trim() || null,
+        })
+      });
+      if (!res.ok) throw new Error(await res.text());
+      status.textContent = '✓ Saved.'; status.style.color = '#10b981';
+      setTimeout(() => seqShowForm(false), 800);
+      loadTemplates();
     } catch(e) {
       status.textContent = `Error: ${e.message}`; status.style.color = '#ef4444';
     }
   }
 
-  window.parseBulkEmails = async function() {
-    const raw = document.getElementById('bulk-emails-input').value.trim();
-    if (!raw) return;
-    const emails = raw.split('\n').map(e => e.trim().toLowerCase()).filter(Boolean);
-    if (!emails.length) return;
-
-    document.getElementById('bulk-preview-body').innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-textSecondary text-xs">Looking up ${emails.length} emails...</td></tr>`;
-    document.getElementById('bulk-preview').classList.remove('hidden');
-
-    // Look up all in one query using 'in' filter
-    try {
-      const results = await sb('prospects', {
-        select: 'id,email,first_name,last_name,company_name',
-        email: `in.(${emails.map(e => `"${e}"`).join(',')})`,
-        limit: 1000
-      });
-      const found = new Map(results.map(p => [p.email, p]));
-      bulkParsedProspects = emails.map(email => ({ email, prospect: found.get(email) || null }));
-
-      const foundCount = bulkParsedProspects.filter(r => r.prospect).length;
-      document.getElementById('bulk-preview-count').textContent = `— ${foundCount} found, ${emails.length - foundCount} not found`;
-      document.getElementById('bulk-preview-body').innerHTML = bulkParsedProspects.map(r => `
-        <tr class="border-b border-border">
-          <td class="px-4 py-2 text-xs text-white font-mono">${r.email}</td>
-          <td class="px-4 py-2 text-xs text-textSecondary">${r.prospect ? `${r.prospect.first_name||''} ${r.prospect.last_name||''}`.trim() : '—'}</td>
-          <td class="px-4 py-2 text-xs text-textSecondary">${r.prospect?.company_name || '—'}</td>
-          <td class="px-4 py-2 text-xs">${r.prospect
-            ? '<span class="px-2 py-0.5 rounded bg-success/10 text-success">Found</span>'
-            : '<span class="px-2 py-0.5 rounded bg-error/10 text-error">Not found — will skip</span>'
-          }</td>
-        </tr>
-      `).join('');
-    } catch(e) {
-      document.getElementById('bulk-preview-body').innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-error text-xs">${e.message}</td></tr>`;
-    }
+  window.deleteTemplate = async function(id) {
+    if (!confirm('Delete this template?')) return;
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/sequence_templates?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+    });
+    if (res.ok) loadTemplates();
   }
 
-  window.submitBulkSequences = async function() {
-    const status = document.getElementById('seq-bulk-status');
-    const campaignName = document.getElementById('bulk-campaign-name').value.trim();
-    if (!campaignName) { status.textContent = '⚠ Campaign name is required.'; status.style.color = '#ef4444'; return; }
-    const valid = bulkParsedProspects.filter(r => r.prospect);
-    if (!valid.length) { status.textContent = '⚠ No valid prospects to enrol.'; status.style.color = '#ef4444'; return; }
-
-    status.textContent = `Pushing ${valid.length} sequences...`; status.style.color = '#a0a0a0';
-    const niche = document.getElementById('bulk-niche').value.trim();
-    const campaignId = document.getElementById('bulk-campaign-id').value.trim();
-
-    let success = 0, failed = 0;
-    for (const row of valid) {
-      try {
-        await insertSequence({
-          contact_id: row.prospect.id,
-          campaign_name: campaignName,
-          niche: niche || null,
-          smartlead_campaign_id: campaignId || null,
-          enrolled_at: new Date().toISOString(),
-          status: 'active',
-          current_step: 0
-        });
-        success++;
-      } catch(e) { failed++; }
-    }
-    status.textContent = `✓ ${success} pushed${failed ? `, ${failed} failed` : ''}.`;
-    status.style.color = failed ? '#fbbf24' : '#10b981';
-    loadSequences();
-  }
-
-  window.loadSequences = async function() {
+  window.loadTemplates = async function() {
+    const grid = document.getElementById('tmpl-grid');
     try {
-      const seqs = await sb('sequences', {
-        select: 'id,campaign_name,niche,geography,smartlead_campaign_id,contact_id,current_step,status,enrolled_at',
-        order: 'enrolled_at.desc',
-        limit: 200
-      });
-      // Get prospect names from already-loaded state
-      const prospectMap = new Map(state.prospects.map(p => [p.id, p]));
-      document.getElementById('sequences-body').innerHTML = seqs.length ? seqs.map(s => {
-        const p = prospectMap.get(s.contact_id);
-        return `
-          <tr class="border-b border-border hover:bg-surfaceHover transition-colors">
-            <td class="px-4 py-3 text-white text-sm">${s.campaign_name||'—'}</td>
-            <td class="px-4 py-3 text-textSecondary text-xs">${s.niche||'—'}</td>
-            <td class="px-4 py-3 text-textSecondary text-xs">${s.geography||'—'}</td>
-            <td class="px-4 py-3 text-textSecondary text-xs">${p ? `${p.first_name||''} ${p.last_name||''}`.trim() || p.email : s.contact_id?.substring(0,8)+'…'}</td>
-            <td class="px-4 py-3 text-textSecondary text-xs">${s.current_step||0}</td>
-            <td class="px-4 py-3"><span class="px-2 py-0.5 rounded text-xs ${s.status==='active' ? 'bg-success/10 text-success' : 'bg-surfaceHover text-textSecondary'}">${s.status||'active'}</span></td>
-            <td class="px-4 py-3 text-textSecondary text-xs">${formatDate(s.enrolled_at)}</td>
-          </tr>`;
-      }).join('') : '<tr><td colspan="7" class="px-4 py-8 text-center text-textSecondary text-sm">No sequences yet.</td></tr>';
+      const templates = await sb('sequence_templates', { select: '*', order: 'created_at.desc', limit: 100 });
+      document.getElementById('tmpl-count').textContent = `— ${templates.length} saved`;
+      grid.innerHTML = templates.length ? templates.map(t => `
+        <div class="bg-surface border border-border rounded-xl p-5 space-y-3 fade-in">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-white font-semibold text-sm">${t.name}</p>
+              <p class="text-xs text-textSecondary mt-0.5">${t.description || '—'}</p>
+            </div>
+            <button onclick="deleteTemplate('${t.id}')" class="text-textSecondary hover:text-error transition-colors shrink-0 mt-0.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            ${t.niche ? `<span class="px-2 py-0.5 bg-accent/10 text-accent rounded text-xs">${t.niche}</span>` : ''}
+            ${t.geography ? `<span class="px-2 py-0.5 bg-surfaceHover border border-border rounded text-xs text-textSecondary">${t.geography}</span>` : ''}
+            <span class="px-2 py-0.5 bg-surfaceHover border border-border rounded text-xs text-textSecondary">
+              ${[t.step1_body, t.step2_body, t.step3_body].filter(Boolean).length} step${[t.step1_body, t.step2_body, t.step3_body].filter(Boolean).length !== 1 ? 's' : ''}
+            </span>
+          </div>
+          <p class="text-xs text-textSecondary">${formatDate(t.created_at)}</p>
+        </div>
+      `).join('') : '<div class="lg:col-span-2 text-center py-12 text-textSecondary text-sm">No templates yet. Hit "New Template" to create one.</div>';
     } catch(e) {
-      document.getElementById('sequences-body').innerHTML = `<tr><td colspan="7" class="px-4 py-4 text-center text-error text-xs">${e.message}</td></tr>`;
+      grid.innerHTML = `<div class="lg:col-span-2 text-center py-8 text-error text-xs">${e.message}</div>`;
     }
   }
 
@@ -850,7 +652,7 @@
         sb('emails', { select: 'id,prospect_id,subject,body,tier,icp_score,key_insight,tone_used,match_level,written_by,status,created_at,personalisation_used', order: 'created_at.desc', limit: 1000 }),
         sb('replies', { select: 'id,prospect_id,reply_body,reply_subject,sequence_step,step_written_by,reply_type,replied_at,smartlead_campaign_id', order: 'replied_at.desc', limit: 500 }),
         sb('dedup_log', { select: 'id,email,reason,attempted_data,created_at', order: 'created_at.desc', limit: 500 }),
-        sb('outreach_stats', { select: '*', limit: 1 })
+        sb('outreach_stats', { select: '*' })
       ]);
 
       state.prospects = prospects;
@@ -860,7 +662,8 @@
       state.replies = replies;
       state.repliesFiltered = replies;
       state.dedup = dedup;
-      state.stats = stats[0] || {};
+      // outreach_stats is now a VIEW — returns array of one row
+      state.stats = Array.isArray(stats) ? (stats[0] || {}) : (stats || {});
 
       renderDashboard();
       renderProspects();
